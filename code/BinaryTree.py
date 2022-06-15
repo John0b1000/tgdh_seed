@@ -90,25 +90,6 @@ class BinaryTree:
     #
     # end method: TypeAssign
 
-    # method 
-
-    # method: BuildTree
-    #
-    def BuildTree(self):
-
-        # build the tree
-        #
-        print("Generating Tree with {0} members ...".format(str(self.size).rjust(2)))
-        while self.nodetrack is not self.nodemax:
-            self.WalkTreeBuild(self.root)
-
-        # assign types
-        #
-        self.TypeAssign()
-
-    #
-    # end method: BuildTree
-
     # method: IDAssign
     #
     def IDAssign(self):
@@ -138,6 +119,27 @@ class BinaryTree:
         
     #
     # end method: IDAssign
+
+    # method: BuildTree
+    #
+    def BuildTree(self):
+
+        # build the tree
+        #
+        print("Generating Tree with {0} members ...".format(str(self.size).rjust(2)))
+        while self.nodetrack is not self.nodemax:
+            self.WalkTreeBuild(self.root)
+
+        # assign types
+        #
+        self.TypeAssign()
+
+        # assign member ID
+        #
+        self.IDAssign()
+
+    #
+    # end method: BuildTree
 
     # method: TreeExport
     #

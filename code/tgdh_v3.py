@@ -36,7 +36,6 @@ def main(argv):
     # instantiate a binary tree object 
     #
     btree = BinaryTree(size=isize, uid=uid)
-    btree.IDAssign()
     #btree.TreePrint()
 
     # generate a graphic of the tree for visualization
