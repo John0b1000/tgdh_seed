@@ -13,7 +13,7 @@ while [ $x ]
 do
     for i in {2..16}
     do
-	/Users/johnnori/Desktop/files/temple/research/TGDH/anytree/supertree/tgdh_v2.py -s $i -i 1
+	./tgdh_v2.py -s $i -i 1
 	sleep 1.2
     done
 done
