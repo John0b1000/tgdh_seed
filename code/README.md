@@ -4,7 +4,7 @@ This folder contains the source code for the TGDH implementation
 ```
 python3 tgdh_v2.py -s <initial size> -i <unique member ID>
 ```
-## Example:
+## Example :
 ```
 python3 tgdh_v2.py -s 4 -i 1
 ```
