@@ -9,6 +9,9 @@
 from DataNode import DataNode
 from anytree.exporter import DotExporter
 from anytree import RenderTree
+from anytree import PreOrderIter
+import math
+import itertools
 
 # class: TreeControl
 #
@@ -24,7 +27,8 @@ class BinaryTree:
         self.size = size  # number of members in the group
         self.uid = uid  # unique member ID
         self.nodetrack = 1  # number of nodes generated
-        self.nodemax = size + (size - 1)  # maximum number of nodes in a tree with self.size members 
+        self.nodemax = (2*size)- 1  # maximum number of nodes in a tree with self.size members 
+        self.height = math.floor(math.log((self.nodemax-1),2))  # height of the tree
         self.root = DataNode() # root of the tree
 
         # generate an initial tree
@@ -43,7 +47,7 @@ class BinaryTree:
         nl = '<' + str(curr_n.l+1) + ',' + str(2*curr_n.v) + '>'
         curr_n.lchild = DataNode(name=nl, parent=curr_n, l=curr_n.l+1, v=2*curr_n.v, ntype='inter')
         nr = '<' + str(curr_n.l+1) + ',' + str(2*curr_n.v + 1) + '>'
-        curr_n.rchild = DataNode(name=nr, parent=curr_n, l=curr_n.l+1, v=2*curr_n.v+1, ntype='inter')
+        curr_n.rchild = DataNode(name=nr, parent=curr_n, l=curr_n.l+1, v=(2*curr_n.v)+1, ntype='inter')
 
     #
     # end method: AddNodes
@@ -64,6 +68,29 @@ class BinaryTree:
 
     #
     # end method: WalkTreeBuild
+    
+    # method: PreOrderWalk
+    #
+    def PreOrderWalk(self):
+
+        # traverse the tree in preorder fashion
+        #
+        return(PreOrderIter(self.root))
+
+    # method: TypeAssign
+    #
+    def TypeAssign(self):
+
+        # traverse the tree and assign types to each node
+        #
+        for node in self.PreOrderWalk():
+            if node.lchild is None:
+                node.ntype = 'member'
+
+    #
+    # end method: TypeAssign
+
+    # method 
 
     # method: BuildTree
     #
@@ -75,16 +102,50 @@ class BinaryTree:
         while self.nodetrack is not self.nodemax:
             self.WalkTreeBuild(self.root)
 
+        # assign types
+        #
+        self.TypeAssign()
+
     #
     # end method: BuildTree
+
+    # method: IDAssign
+    #
+    def IDAssign(self):
+
+        # member ID list generation
+        #
+        baselist = [1,2]
+        if self.height >= 1:
+            for i in range(0, self.height-1):
+                templist = list(reversed(range(pow(2,i+2)+1)))
+                newlist = templist[0:pow(2,i+1)]
+                baselist = list(itertools.chain(*zip(baselist, newlist)))
+        max_size = pow(2,self.height)
+        hlist = list(reversed(range(max_size+1)))
+        rm_nodes = hlist[0:max_size-self.size]
+        for num in rm_nodes:
+            baselist.remove(num)
+
+        # assign the ID numbers
+        # 
+        idlist = list(reversed(baselist))
+        c = len(baselist)-1
+        for node in self.PreOrderWalk():
+            if node.lchild is None:
+                node.uid = idlist[c]
+                c = c-1
+        
+    #
+    # end method: IDAssign
 
     # method: TreeExport
     #
     def TreeExport(self):
 
-        # use graphics module to print the tree 
+        # use graphics module to print tree 
         #
-        DotExporter(self.root).to_picture("TreeExport.png")
+        DotExporter(self.root, nodeattrfunc=lambda n: 'label="%s\n%s"' % (n.name, n.uid)).to_picture("TreeExport.png")
 
     #
     # end method: TreeExport
@@ -97,7 +158,7 @@ class BinaryTree:
         #
         for pre, _, node in RenderTree(self.root):
             treestr = u"%s%s" % (pre, node.name)
-            print(treestr.ljust(8), node.name)
+            print(treestr.ljust(8), node.ntype, node.uid)
         
     #
     # end method: TreePrint
