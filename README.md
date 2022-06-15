@@ -4,7 +4,7 @@ Python implementation of TGDH encryption scheme for use on the SEED Internet Emu
 ```
 ./tree_demo.sh
 ```
-*Ensure execution permission is given*
+*Ensure execution permission is given:*
 
 ```
 chmod a+x tree_demo.sh
