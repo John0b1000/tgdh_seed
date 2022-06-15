@@ -82,7 +82,7 @@ class BinaryTree:
     #
     def TreeExport(self):
 
-        # use graphics module to print tree 
+        # use graphics module to print the tree 
         #
         DotExporter(self.root).to_picture("TreeExport.png")
 
