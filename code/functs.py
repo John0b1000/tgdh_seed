@@ -21,7 +21,7 @@ def cmdl_parse(alist):
 
     # return in a tuple
     #
-    return(args.s, args.i)
+    return(int(args.s), int(args.i))
 
 #
 # end function: cmdl_parse

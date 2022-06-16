@@ -1,4 +1,4 @@
-# file: BinaryTree
+# file: BinaryTree.py
 #
 
 # description: contains the BinaryTree class
@@ -13,19 +13,20 @@ from anytree import PreOrderIter
 import math
 import itertools
 
-# class: TreeControl
+# class: BinaryTree
 #
 
 class BinaryTree:
 
     # constructor
     #
-    def __init__(self, size=2, uid = None):
+    def __init__(self, size=2, uid=None):
 
         # define initial data
         #
         self.size = size  # number of members in the group
         self.uid = uid  # unique member ID
+        self.me = None # the node in the tree that refers to me
         self.nodetrack = 1  # number of nodes generated
         self.nodemax = (2*size)- 1  # maximum number of nodes in a tree with self.size members 
         self.height = math.floor(math.log((self.nodemax-1),2))  # height of the tree
@@ -127,6 +128,7 @@ class BinaryTree:
         # build the tree
         #
         print("Generating Tree with {0} members ...".format(str(self.size).rjust(2)))
+        print("I am member {0}".format(str(self.uid).rjust(2)))
         while self.nodetrack is not self.nodemax:
             self.WalkTreeBuild(self.root)
 
@@ -138,16 +140,47 @@ class BinaryTree:
         #
         self.IDAssign()
 
+        # find me in the tree
+        #
+        self.FindMe()
+
     #
     # end method: BuildTree
+
+    # method: FindMe
+    #
+    def FindMe(self):
+
+        # find the node that matches this members's unique ID
+        #
+        for node in self.WalkPreOrder():
+            if node.mid == self.uid:
+                self.me = node
+
+    #
+    # end method: FindMe
 
     # method: TreeExport
     #
     def TreeExport(self):
 
+        # function: nodeattrfunc
+        #
+        def nodeattrfunc(node):
+
+            # label the node that is me
+            #
+            if node == self.me:
+                return('label="%s\n%s (me)"' % (node.name, node.mid))
+            else:
+                return('label="%s\n%s\n"' % (node.name, node.mid))
+        
+        #
+        # end function: nodeattrfunc
+        
         # use graphics module to print tree 
         #
-        DotExporter(self.root, nodeattrfunc=lambda n: 'label="%s\n%s"' % (n.name, n.mid)).to_picture("TreeExport.png")
+        DotExporter(self.root, nodeattrfunc=nodeattrfunc).to_picture("TreeExport.png")
 
     #
     # end method: TreeExport
@@ -166,7 +199,7 @@ class BinaryTree:
     # end method: TreePrint
 
 #
-# end class: TreeControl
+# end class: BinaryTree
 
 #
-# end file: TreeControl
+# end file: BinaryTree.py

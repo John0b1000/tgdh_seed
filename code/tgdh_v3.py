@@ -8,13 +8,14 @@
 
 # sources: 
 # https://stackoverflow.com/questions/7946798/interleave-multiple-lists-of-the-same-length-in-python
+# https://anytree.readthedocs.io/en/latest/exporter/dotexporter.html
 #
 
 # version: 3
 # 0: generating a simple tree structure given initial data
 # 1: make a tree class to maintain nodes
 # 2: use inheritance to organize the node class
-# 3: add functionality: TypeAssign method, IDAssign method
+# 3: add functionality: TypeAssign method, IDAssign method, FindMe method
 #
 
 # usage:
@@ -53,4 +54,4 @@ if __name__ == "__main__":
     main(sys.argv)
 
 #
-# end file: tgdh_v2.py
+# end file: tgdh_v3.py

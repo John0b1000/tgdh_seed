@@ -24,7 +24,7 @@ class DataNode(NodeMixin):
         self.l = l  # level index
         self.v = v  # number index
         self.ntype = ntype  # node type: root, inter, member, sponsor
-        self.mid =  mid  # member ID
+        self.mid = mid  # member ID
         self.rchild = rchild  # right child of the node 
         self.lchild = lchild  # left child of the node
 
