@@ -40,6 +40,7 @@ def main(argv):
 
     # generate a graphic of the tree for visualization
     #
+    #btree.root.PrintAttributes()
     #btree.TreePrint()
     btree.TreeExport()
 
