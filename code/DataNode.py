@@ -15,7 +15,7 @@ class DataNode(NodeMixin):
 
     # constructor
     #
-    def __init__(self, name='<0,0>', parent=None, l=0, v=0, ntype='root', uid=None, rchild=None, lchild=None):
+    def __init__(self, name='<0,0>', parent=None, l=0, v=0, ntype='root', mid=None, rchild=None, lchild=None):
 
         # define class data
         #
@@ -24,7 +24,7 @@ class DataNode(NodeMixin):
         self.l = l  # level index
         self.v = v  # number index
         self.ntype = ntype  # node type: root, inter, member, sponsor
-        self.uid = uid  # unique member ID
+        self.mid =  mid  # member ID
         self.rchild = rchild  # right child of the node 
         self.lchild = lchild  # left child of the node
 
@@ -39,12 +39,12 @@ class DataNode(NodeMixin):
             print("Node Parent: " + self.parent.name)
         print("Node index: " + "<{0},{1}>".format(str(self.l), str(self.v)))
         print("Node Type: " + self.ntype)
-        if self.uid is not None:
-            print("Node id: " + self.uid)
+        if self.mid is not None:
+            print("Node id: " + self.mid)
         if self.lchild is not None:
             print("Node left child: " + self.lchild.name)
         if self.rchild is not None:
-            print("Node righ child: " + self.rchild.name)
+            print("Node right child: " + self.rchild.name)
 
     #
     # end method: PrintAttributes

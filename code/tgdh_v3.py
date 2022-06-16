@@ -14,7 +14,8 @@
 # 0: generating a simple tree structure given initial data
 # 1: make a tree class to maintain nodes
 # 2: use inheritance to organize the node class
-# 3: add functionality: TypeAssign method, 
+# 3: add functionality: TypeAssign method, IDAssign method
+#
 
 # usage:
 #  python3 tgdh_v3.py -s <initial size> -i <unique member ID>
@@ -36,10 +37,11 @@ def main(argv):
     # instantiate a binary tree object 
     #
     btree = BinaryTree(size=isize, uid=uid)
-    #btree.TreePrint()
 
     # generate a graphic of the tree for visualization
     #
+    btree.root.PrintAttributes()
+    btree.TreePrint()
     btree.TreeExport()
 
 #

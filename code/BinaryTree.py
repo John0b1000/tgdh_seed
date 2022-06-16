@@ -114,7 +114,7 @@ class BinaryTree:
         c = len(baselist)-1
         for node in self.PreOrderWalk():
             if node.lchild is None:
-                node.uid = idlist[c]
+                node.mid = idlist[c]
                 c = c-1
         
     #
@@ -147,7 +147,7 @@ class BinaryTree:
 
         # use graphics module to print tree 
         #
-        DotExporter(self.root, nodeattrfunc=lambda n: 'label="%s\n%s"' % (n.name, n.uid)).to_picture("TreeExport.png")
+        DotExporter(self.root, nodeattrfunc=lambda n: 'label="%s\n%s"' % (n.name, n.mid)).to_picture("TreeExport.png")
 
     #
     # end method: TreeExport
@@ -160,7 +160,7 @@ class BinaryTree:
         #
         for pre, _, node in RenderTree(self.root):
             treestr = u"%s%s" % (pre, node.name)
-            print(treestr.ljust(8), node.ntype, node.uid)
+            print(treestr.ljust(8), node.ntype, node.mid)
         
     #
     # end method: TreePrint
