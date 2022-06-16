@@ -19,7 +19,7 @@ do
     do
 	DIFF=$((i-2+1))
 	j=$(($(($RANDOM%$DIFF))+2))
-	/Users/johnnori/Desktop/files/temple/research/TGDH/anytree/v3/tgdh_v3.py -s $i -i $j
+	/Users/johnnori/Desktop/files/temple/research/TGDH/anytree/v3/driver.py -s $i -i $j
 	sleep 1.2
     done
 done
