@@ -71,7 +71,7 @@ class BinaryTree:
     
     # method: PreOrderWalk
     #
-    def PreOrderWalk(self):
+    def WalkPreOrder(self):
 
         # traverse the tree in preorder fashion
         #
@@ -83,7 +83,7 @@ class BinaryTree:
 
         # traverse the tree and assign types to each node
         #
-        for node in self.PreOrderWalk():
+        for node in self.WalkPreOrder():
             if node.lchild is None:
                 node.ntype = 'member'
 
@@ -112,7 +112,7 @@ class BinaryTree:
         # 
         idlist = list(reversed(baselist))
         c = len(baselist)-1
-        for node in self.PreOrderWalk():
+        for node in self.WalkPreOrder():
             if node.lchild is None:
                 node.mid = idlist[c]
                 c = c-1
