@@ -4,9 +4,11 @@ This folder contains the source code for the TGDH implementation.
 ```
 python3 tgdh_v2.py -s <initial size> -i <unique member ID>
 ```
-## Example (generate a tree with 4 nodes, i.e., group of 4 members):
+## Example:
+Generate a tree with 4 nodes, i.e., group of 4 members.
+This node/host/computer will have unique member ID 3.
 ```
-python3 tgdh_v2.py -s 4 -i 1
+python3 tgdh_v2.py -s 4 -i 3
 ```
 *This program can also be run as a script.*
 
