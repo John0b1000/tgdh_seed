@@ -3,6 +3,10 @@
 # file: tree_demo.sh
 #
 
+# sources:
+# https://blog.eduonix.com/shell-scripting/generating-random-numbers-in-linux-shell-scripting/
+#
+
 # this file loops and generates trees of various sizes
 #
 
@@ -13,7 +17,9 @@ while [ $x ]
 do
     for i in {2..16}
     do
-	code/tgdh_v3.py -s $i -i 1
+	DIFF=$((i-2+1))
+	j=$(($(($RANDOM%$DIFF))+2))
+	/Users/johnnori/Desktop/files/temple/research/TGDH/anytree/v3/tgdh_v3.py -s $i -i $j
 	sleep 1.2
     done
 done
