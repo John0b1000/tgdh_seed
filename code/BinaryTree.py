@@ -86,7 +86,7 @@ class BinaryTree:
         #
         for node in self.WalkPreOrder():
             if node.lchild is None:
-                node.ntype = 'member'
+                node.ntype = 'mem'
 
     #
     # end method: TypeAssign
@@ -171,9 +171,11 @@ class BinaryTree:
             # label the node that is me
             #
             if node == self.me:
-                return('label="%s\n%s (me)"' % (node.name, node.mid))
+                return('label="%s\n%s: %s (me)"' % (node.name, node.ntype, node.mid))
+            elif node.mid is not None:
+                return('label="%s\n%s: %s\n"' % (node.name, node.ntype, node.mid))
             else:
-                return('label="%s\n%s\n"' % (node.name, node.mid))
+                return('label="%s\n%s"' % (node.name, node.ntype))
         
         #
         # end function: nodeattrfunc
