@@ -43,7 +43,7 @@ def main(argv):
 
     # wait for instructions from the commmand line
     #
-    #get_instructions(btree)
+    get_instructions(btree)
 
     # exit gracefully
     #
