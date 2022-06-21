@@ -43,12 +43,11 @@ def main(argv):
 
     # wait for instructions from the commmand line
     #
-    ex = get_instructions(btree)
+    #get_instructions(btree)
 
     # exit gracefully
     #
-    if ex == True:
-        return(0)
+    return(0)
 
 #
 # end function: main
