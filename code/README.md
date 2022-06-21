@@ -23,8 +23,9 @@ Update Tree: "u" or "update"
 Quit/Exit Program: "q" or "quit"
 ## Examples:
 Generate a tree with 4 members (I am member 1):
-'''
+```
 python3 code/driver.py -s 4 -i 1
+```
 Allow a new member to join:
 ```
 >> Enter Event Here: j
@@ -35,6 +36,7 @@ Member 4 wants to leave:
 >> Enter leaving member ID: 4
 ```
 Member 2 wants to leave:
+```
 >> Enter Event Here: l
 >> Enter leaving member ID: 2
 ```
@@ -45,6 +47,7 @@ Find Member 5:
 >> Enter the member ID: 5
 ```
 Find node <1,1>:
+```
 >> Enter event here: f
 >> Would you like to find a member or node? n
 >> Enter node index (l,v): 1,1
