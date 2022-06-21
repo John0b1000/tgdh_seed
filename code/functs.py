@@ -33,12 +33,12 @@ def get_instructions(btree):
     # receive command line input
     #
     while True:
-        instruct = input("Enter event here: ")
+        instruct = input(">> Enter event here: ")
         if instruct == "join" or instruct == "j":
             btree.JoinEvent()
             btree.TreeExport() 
         elif instruct == "leave" or instruct == "l":
-            lmem = int(input("Enter leaving member ID: "))
+            lmem = int(input(">> Enter leaving member ID: "))
             print("Member " + str(lmem) + " is leaving ...")
             btree.LeaveEvent(lmem)
             btree.TreeExport()
@@ -46,13 +46,13 @@ def get_instructions(btree):
             print("Freeing resources and exiting ...")
             return(True)  # exit gracefully
         elif instruct == "f" or instruct == "find":
-            ans = input("Would you like to find a member or node? ")
+            ans = input(">> Would you like to find a member or node? ")
             if ans == "m" or ans == "member":
-                iden = input("Enter the member ID: ")
+                iden = input(">> Enter the member ID: ")
                 fmem = btree.FindNode(iden, True)
                 fmem.PrintAttributes()
             elif ans == "n" or ans == "node":
-                iden = input("Enter node index (l,v): ")
+                iden = input(">> Enter node index (l,v): ")
                 fnode = btree.FindNode(iden, False)
                 fnode.PrintAttributes()
             else: print("**> Error: Invalid response!")

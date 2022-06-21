@@ -317,7 +317,6 @@ class BinaryTree:
                 #
                 sponsor_node = list(self.WalkPreOrder(node.GetSibling()))[-1]
                 sponsor_node.SponsorAssign(join=False)
-                print(sponsor_node.name)
 
                 # transfer data from the sibling node to the parent
                 # the parent node is being replaced
