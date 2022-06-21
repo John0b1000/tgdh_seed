@@ -38,8 +38,6 @@ def main(argv):
     # print the initial tree
     #
     btree.TreeExport()
-    #btree.TreePrint()
-    #btree.VerboseNodePrint()
 
     # wait for instructions from the commmand line
     #
