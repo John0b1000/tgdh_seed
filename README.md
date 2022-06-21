@@ -7,6 +7,8 @@ pip install anytree
 brew install graphviz
 ```
 ## Usage: tree_demo.sh
+*The function get_instructions must be commented out for this script to run (line 46 in driver.py).*
+
 ```
 ./tree_demo.sh
 ```
