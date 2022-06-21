@@ -6,16 +6,12 @@
 # description: driver program for tgdh scheme
 #
 
-# sources: 
-# https://stackoverflow.com/questions/7946798/interleave-multiple-lists-of-the-same-length-in-python
-# https://anytree.readthedocs.io/en/latest/exporter/dotexporter.html
-#
-
-# version: 3
+# version: 4
 # 0: generating a simple tree structure given initial data
 # 1: make a tree class to maintain nodes
 # 2: use inheritance to organize the node class
 # 3: add functionality: TypeAssign method, IDAssign method, FindMe method
+# 4: add functionality: join event, leave event, post-run command line instructions; incorporate more built-in anytree functions
 #
 
 # usage:
@@ -24,7 +20,7 @@
 # import modules
 #
 import sys
-from functs import cmdl_parse
+from functs import cmdl_parse, get_instructions
 from BinaryTree import BinaryTree
 
 # function: main
@@ -39,15 +35,20 @@ def main(argv):
     #
     btree = BinaryTree(size=isize, uid=uid)
 
-    # generate a graphic of the tree for visualization
+    # print the initial tree
     #
-    #btree.root.PrintAttributes()
-    btree.TreePrint()
     btree.TreeExport()
+    #btree.TreePrint()
+    #btree.VerboseNodePrint()
+
+    # wait for instructions from the commmand line
+    #
+    ex = get_instructions(btree)
 
     # exit gracefully
     #
-    return(0)
+    if ex == True:
+        return(0)
 
 #
 # end function: main

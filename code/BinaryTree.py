@@ -9,6 +9,7 @@
 from DataNode import DataNode
 from anytree.exporter import DotExporter
 from anytree import RenderTree
+from anytree import search
 from anytree import PreOrderIter
 import math
 import itertools
@@ -28,11 +29,12 @@ class BinaryTree:
         self.uid = uid  # unique member ID
         self.me = None # the node in the tree that refers to me
         self.nodetrack = 1  # number of nodes generated
-        self.nodemax = (2*size)- 1  # maximum number of nodes in a tree with self.size members 
+        self.nodemax = (2*size)- 1  # maximum number of nodes in a tree with self.size members
+        self.nextmemb = size+1  # the member ID of the next member to join the tree 
         self.height = math.floor(math.log((self.nodemax-1),2))  # height of the tree
         self.root = DataNode() # root of the tree
 
-        # generate an initial tree
+        # build an initial tree and print it
         #
         self.BuildTree()
 
@@ -45,13 +47,22 @@ class BinaryTree:
 
         # add two nodes to keep the tree full
         #
-        nl = '<' + str(curr_n.l+1) + ',' + str(2*curr_n.v) + '>'
-        curr_n.lchild = DataNode(name=nl, parent=curr_n, l=curr_n.l+1, v=2*curr_n.v, ntype='inter')
-        nr = '<' + str(curr_n.l+1) + ',' + str(2*curr_n.v + 1) + '>'
-        curr_n.rchild = DataNode(name=nr, parent=curr_n, l=curr_n.l+1, v=(2*curr_n.v)+1, ntype='inter')
+        curr_n.lchild = DataNode(pos='left', l=curr_n.l+1, v=2*curr_n.v, parent=curr_n, ntype='inter')
+        curr_n.rchild = DataNode(pos='right', l=curr_n.l+1, v=(2*curr_n.v)+1, parent=curr_n, ntype='inter')
 
     #
     # end method: AddNodes
+
+    # method: GetLeaves
+    #
+    def GetLeaves(self):
+
+        # return the leaves of the tree
+        #
+        return(self.root.leaves)
+
+    #
+    # end method: GetLeaves
 
     # method: WalkTreeBuild
     #
@@ -59,7 +70,7 @@ class BinaryTree:
 
         # walk along the tree and add the appropriate nodes
         #
-        if curr_n.rchild is not None and curr_n.lchild is not None:
+        if not curr_n.IsLeaf():
             self.WalkTreeBuild(curr_n.rchild)
             if self.nodetrack is not self.nodemax:
                 self.WalkTreeBuild(curr_n.lchild)
@@ -70,13 +81,16 @@ class BinaryTree:
     #
     # end method: WalkTreeBuild
     
-    # method: PreOrderWalk
+    # method: WalkPreOrder
     #
-    def WalkPreOrder(self):
+    def WalkPreOrder(self, root):
 
         # traverse the tree in preorder fashion
         #
-        return(PreOrderIter(self.root))
+        return(PreOrderIter(root))
+
+    #
+    # end method: WalkPreOrer
 
     # method: TypeAssign
     #
@@ -84,9 +98,8 @@ class BinaryTree:
 
         # traverse the tree and assign types to each node
         #
-        for node in self.WalkPreOrder():
-            if node.lchild is None:
-                node.ntype = 'mem'
+        for node in self.GetLeaves():
+            node.ntype = 'mem'
 
     #
     # end method: TypeAssign
@@ -95,7 +108,7 @@ class BinaryTree:
     #
     def IDAssign(self):
 
-        # member ID list generation
+        # generate member ID lists
         #
         baselist = [1,2]
         if self.height >= 1:
@@ -113,10 +126,9 @@ class BinaryTree:
         # 
         idlist = list(reversed(baselist))
         c = len(baselist)-1
-        for node in self.WalkPreOrder():
-            if node.lchild is None:
-                node.mid = idlist[c]
-                c = c-1
+        for node in self.GetLeaves():
+            node.mid = idlist[c]
+            c = c-1
         
     #
     # end method: IDAssign
@@ -132,16 +144,10 @@ class BinaryTree:
         while self.nodetrack is not self.nodemax:
             self.WalkTreeBuild(self.root)
 
-        # assign types
+        # set node attributes
         #
         self.TypeAssign()
-
-        # assign member ID
-        #
         self.IDAssign()
-
-        # find me in the tree
-        #
         self.FindMe()
 
     #
@@ -151,14 +157,190 @@ class BinaryTree:
     #
     def FindMe(self):
 
+        # function: me_finder
+        #
+        def me_finder(node):
+
+            # find me
+            #
+            if node.mid == self.uid:
+                return(node)
+
+        #
+        # end function: me_finder
+
         # find the node that matches this members's unique ID
         #
-        for node in self.WalkPreOrder():
-            if node.mid == self.uid:
-                self.me = node
+        self.me = search.find(self.root, me_finder)
 
     #
     # end method: FindMe
+
+    # method: FindNode
+    #
+    def FindNode(self, iden, memflag):
+
+        # function: mem_finder
+        #
+        def mem_finder(node):
+
+            # find member
+            #
+            if node.mid == int(iden):
+                return(node)
+
+        #
+        # end function: mem_finder
+
+        # function: node_funder
+        #
+        def node_finder(node):
+
+            # find any node
+            #
+            if str(node.l) + ',' + str(node.v) == iden:
+                return(node)
+            
+        #
+        # end function: node_finder
+
+        # find a specific node by member number or index
+        #
+        if memflag == True:
+            return(search.find(self.root, mem_finder))
+        else:
+            return(search.find(self.root, node_finder))
+
+    # 
+    # end method: FindNode
+
+    # method: RecalculateNames
+    #
+    def RecalculateNames(self):
+
+        # recalculate all names in the tree
+        #
+        for node in self.WalkPreOrder(self.root):
+            node.name = node.CalculateName()
+    
+    # 
+    # end method: RecalculateNames
+
+    # method: FindInsertion
+    #
+    def FindInsertion(self):
+
+        # find the shallowest level
+        #
+        llist = []
+        plist = []
+        for node in self.GetLeaves():
+            llist.append(node.l)
+            plist.append(node)
+        slevel = min(llist)
+
+        # find the rightmost node on the shallowest level with no children
+        #
+        slist = [node for node in plist if node.l == slevel]
+        olist = [node for node in slist if node.IsLeaf()]
+        return(olist[len(olist)-1])
+
+    #
+    # end method: FindInsertion
+
+    # method: TreePrepEvent
+    #
+    def TreePrepEvent(self):
+
+        # prepare the tree for a join or leave event
+        #
+        self.TypeAssign()
+
+    #
+    # end method: TreePrepEvent
+
+    # method: TreeRefresh
+    #
+    def TreeRefresh(self):
+
+        # refresh appropriate tree attributes
+        #
+        self.FindMe()
+        self.RecalculateNames()
+
+    # method: JoinEvent
+    #
+    def JoinEvent(self):
+
+        # prepare the tree
+        #
+        self.TreePrepEvent()
+
+        # create two new nodes at the insertion node
+        #
+        inserti_node = self.FindInsertion()
+        self.AddNodes(inserti_node)
+        sponsor_node = inserti_node.lchild  # the sponsor is always the sibling of the new member
+        newmemb_node = inserti_node.rchild
+
+        # assign types and IDs
+        #
+        sponsor_node.SponsorAssign(mid=inserti_node.mid, join=True) 
+        inserti_node.InsertionAssign()
+        newmemb_node.NewMembAssign(self.nextmemb)
+
+        # signal that a new member has been added
+        #
+        self.nextmemb = self.nextmemb+1
+
+        # refresh the tree
+        #
+        self.TreeRefresh()
+
+    #
+    # end method: JoinEvent
+
+    # method: LeaveEvent
+    #
+    def LeaveEvent(self, eid):
+
+        # prepare the tree
+        #
+        self.TreePrepEvent()
+
+        # find the member to be erased
+        #
+        for node in self.GetLeaves():
+            if node.mid == eid:
+
+                # assign the sponsor
+                #
+                sponsor_node = list(self.WalkPreOrder(node.GetSibling()))[-1]
+                sponsor_node.SponsorAssign(join=False)
+                print(sponsor_node.name)
+
+                # transfer data from the sibling node to the parent
+                # the parent node is being replaced
+                #
+                node.parent.TransferDataRemove(node.GetSibling())
+
+        # refresh the tree
+        #
+        self.TreeRefresh()
+
+    #
+    # end method: LeaveEvent
+
+    # method: CalculateGroupKey
+    #
+    def CalculateGroupKey(self):
+
+        # this method will traverse from the "me" node and calculate the group key
+        #
+        pass
+
+    # 
+    # end method: CalculateGroupKey
 
     # method: TreeExport
     #
@@ -199,6 +381,18 @@ class BinaryTree:
         
     #
     # end method: TreePrint
+
+    # method: VerboseNodePrint
+    #
+    def VerboseNodePrint(self):
+
+        # print each attribute for every node
+        #
+        for node in self.WalkPreOrder(self.root):
+            node.PrintAttributes()
+
+    #
+    # end method: VerboseNodePrint
 
 #
 # end class: BinaryTree
