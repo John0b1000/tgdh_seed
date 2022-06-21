@@ -13,14 +13,14 @@ python3 driver.py -s 4 -i 3
 *This program can also be run as a script.*
 ## Command Line Instructions:
 Different events can be specified from the command line:
-  1. Join Event: "j" or "join"
-  2. Leave Event: "l" or "leave"
-  3. Find Member Event: "m" or "member" 
-  4. Find Node Event: "n" or "node" 
-  5. Print Tree: "p" or "print"
-  6. Print Node Attributes: "vp" or "verbose print"
-  7. Update Tree: "u" or "update"
-  8. Quit/Exit Program: "q" or "quit"
+  + Join Event: "j" or "join"
+  + Leave Event: "l" or "leave"
+  + Find Member Event: "m" or "member" 
+  + Find Node Event: "n" or "node" 
+  + Print Tree: "p" or "print"
+  + Print Node Attributes: "vp" or "verbose print"
+  + Update Tree: "u" or "update"
+  + Quit/Exit Program: "q" or "quit"
 ## Examples:
 Generate a tree with 4 members (I am member 1):
 ```
