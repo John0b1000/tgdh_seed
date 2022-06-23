@@ -11,7 +11,7 @@
 # 1: make a tree class to maintain nodes
 # 2: use inheritance to organize the node class
 # 3: add functionality: TypeAssign method, IDAssign method, FindMe method
-# 4: add functionality: join event, leave event, post-run command line instructions; incorporate more built-in anytree functions
+# 4: add functionality: join event, leave event, post-run command line instructions; incorporate more built-in anytree functions; key generation
 #
 
 # usage:

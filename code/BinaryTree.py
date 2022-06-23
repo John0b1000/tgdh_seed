@@ -133,26 +133,6 @@ class BinaryTree:
     #
     # end method: IDAssign
 
-    # method: BuildTree
-    #
-    def BuildTree(self):
-
-        # build the tree
-        #
-        print("Generating Tree with {0} members ...".format(str(self.size).rjust(2)))
-        print("I am member {0}".format(str(self.uid).rjust(2)))
-        while self.nodetrack is not self.nodemax:
-            self.WalkTreeBuild(self.root)
-
-        # set node attributes
-        #
-        self.TypeAssign()
-        self.IDAssign()
-        self.FindMe()
-
-    #
-    # end method: BuildTree
-
     # method: FindMe
     #
     def FindMe(self):
@@ -175,6 +155,56 @@ class BinaryTree:
 
     #
     # end method: FindMe
+
+    # method: KeyGeneration
+    #
+    def KeyGeneration(self):
+
+        # generate the Diffie-Hellman keys for my node only
+        #
+        self.me.GenPrivateKey()
+        self.me.GenBlindKey()
+
+    #
+    # end method: KeyGeneration
+
+    # method: CalculateGroupKey
+    #
+    def CalculateGroupKey(self):
+
+        # traverse to the root and calculate the group key
+        #
+        key_path = self.me.GetKeyPath()
+        co_path = self.me.GetCoPath()
+        for i, node in enumerate(co_path):
+            node.bKey = input("Enter the blind key of {0}: ".format(node.name))
+            key_path[i+1].key = pow(int(node.bKey), key_path[i].key, DataNode.p)
+
+    #
+    # end method: CalculateGroupKey
+
+    # method: BuildTree
+    #
+    def BuildTree(self):
+
+        # build the tree
+        #
+        print("Generating Tree with {0} members ...".format(str(self.size).rjust(2)))
+        print("I am member {0}".format(str(self.uid).rjust(2)))
+        while self.nodetrack is not self.nodemax:
+            self.WalkTreeBuild(self.root)
+
+        # set node attributes
+        #
+        self.TypeAssign()
+        self.IDAssign()
+        self.FindMe()
+        self.KeyGeneration()
+        self.TreeExport()
+        self.CalculateGroupKey()
+
+    #
+    # end method: BuildTree
 
     # method: FindNode
     #
@@ -267,6 +297,11 @@ class BinaryTree:
         #
         self.FindMe()
         self.RecalculateNames()
+        self.TreeExport()
+        self.CalculateGroupKey()
+
+    #
+    # end method: TreeRefresh
 
     # method: JoinEvent
     #
@@ -283,9 +318,9 @@ class BinaryTree:
         sponsor_node = inserti_node.lchild  # the sponsor is always the sibling of the new member
         newmemb_node = inserti_node.rchild
 
-        # assign types and IDs
+        # assign types, IDs, and keys
         #
-        sponsor_node.SponsorAssign(mid=inserti_node.mid, join=True) 
+        sponsor_node.SponsorAssign(mid=inserti_node.mid, key=inserti_node.key, bKey=inserti_node.bKey, join=True) 
         inserti_node.InsertionAssign()
         newmemb_node.NewMembAssign(self.nextmemb)
 
@@ -329,17 +364,6 @@ class BinaryTree:
 
     #
     # end method: LeaveEvent
-
-    # method: CalculateGroupKey
-    #
-    def CalculateGroupKey(self):
-
-        # this method will traverse from the "me" node and calculate the group key
-        #
-        pass
-
-    # 
-    # end method: CalculateGroupKey
 
     # method: TreeExport
     #

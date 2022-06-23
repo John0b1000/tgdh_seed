@@ -96,7 +96,7 @@ class DataNode(NodeMixin):
 
         # generate the private key
         #
-        return(randint(1, int(DataNode.p-1)))
+        self.key = randint(1, int(DataNode.p-1))
 
     # 
     # end method: GenPrivateKey
@@ -107,20 +107,44 @@ class DataNode(NodeMixin):
 
         # generate the blind key
         #
-        return(pow(DataNode.g, self.key, DataNode.p))
+        self.bKey = pow(DataNode.g, self.key, DataNode.p)
 
     #
     # end method: GenBlindKey
 
+    # method: GetKeyPath
+    #
+    def GetKeyPath(self):
+
+        # get the path from the current node up to the root
+        #
+        return(tuple(reversed(self.path)))
+
+    #
+    # end method: GetKeyPath
+
+    # method: GetCoPath
+    #
+    def GetCoPath(self):
+
+        # get the copath from the current node up to the root
+        #
+        return([node.GetSibling() for node in self.GetKeyPath() if node.ntype != 'root'])
+
+    #
+    # end method: GetCoPath
+
     # method: SponsorAssign
     #
-    def SponsorAssign(self, mid=0, join=True):
+    def SponsorAssign(self, mid=0, key=None, bKey=None, join=True):
         
         # assign data 
         #
         self.ntype = 'spon'
         if join == True:
             self.mid = mid
+            self.key = key
+            self.bKey = bKey
 
     #
     # end method: SponsorAssign
@@ -133,6 +157,8 @@ class DataNode(NodeMixin):
         #
         self.ntype = 'inter'
         self.mid = None
+        self.key = None
+        self.bKey = None
 
     #
     # end method: InsertionAssign
@@ -161,6 +187,8 @@ class DataNode(NodeMixin):
         self.rchild = node.rchild
         self.lchild = node.lchild
         self.children = node.children
+        self.key = node.key
+        self.bKey = node.bKey
 
     #
     # end method: TransferData
@@ -185,6 +213,12 @@ class DataNode(NodeMixin):
             print("Node right child: " + self.rchild.name)
         print("Private key: " + str(self.key))
         print("Blind key: " + str(self.bKey))
+        print("Key path:")
+        for node in self.GetKeyPath():
+            print(node.name)
+        print("Key co-path:")
+        for node in self.GetCoPath():
+            print(node.name)
         print("---------------//---------------")
 
     #

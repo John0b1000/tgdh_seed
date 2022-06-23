@@ -35,13 +35,11 @@ def get_instructions(btree):
     while True:
         instruct = input(">> Enter event here: ")
         if instruct == "join" or instruct == "j":
-            btree.JoinEvent()
-            btree.TreeExport() 
+            btree.JoinEvent() 
         elif instruct == "leave" or instruct == "l":
             lmem = int(input(">> Enter leaving member ID: "))
             print("Member " + str(lmem) + " is leaving ...")
             btree.LeaveEvent(lmem)
-            btree.TreeExport()
         elif instruct == "q" or instruct == "quit":
             print("Freeing resources and exiting ...")
             return(True)  # exit gracefully
@@ -64,7 +62,8 @@ def get_instructions(btree):
         elif instruct == "u" or instruct == "update":
             btree.TreePrepEvent()
             btree.TreeRefresh()
-            btree.TreeExport()
+        elif instruct == "pg" or instruct == "print_group_key":
+            print("Group Key is: " + btree.root.key)
         else:
             print("**> Error: Invald input!")
 
