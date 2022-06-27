@@ -618,7 +618,7 @@ class BinaryTree:
         
         # use graphics module to print tree 
         #
-        DotExporter(self.root, nodeattrfunc=nodeattrfunc).to_picture("/files/TreeExport.png")
+        DotExporter(self.root, nodeattrfunc=nodeattrfunc).to_picture("TreeExport.png")
 
     #
     # end method: TreeExport
