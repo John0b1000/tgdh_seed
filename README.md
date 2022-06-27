@@ -77,4 +77,4 @@ Soldier 5:
 ```
 Ctrl+C
 ```
-The secure communication group is now closed.
+The secure communication group is now closed. Soldier 3 (the last remaining group member) will stop automatically.
