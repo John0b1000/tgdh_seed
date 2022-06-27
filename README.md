@@ -67,3 +67,14 @@ Soldier 5:
 ```
 ./join.sh
 ```
+### Step 6: Soldier 2 Leaves the Group
+Soldier 2:
+```
+Ctrl+C
+```
+### Step 7: Soldier 5 Leaves the Group
+Soldier 5:
+```
+Ctrl+C
+```
+The secure communication group is now closed.
