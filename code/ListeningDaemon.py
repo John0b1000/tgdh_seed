@@ -37,7 +37,7 @@ def main(argv):
         #
         mca.recv()
 
-    finally:
+    except KeyboardInterrupt:
 
         # exit gracefully
         #
