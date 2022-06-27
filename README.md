@@ -43,7 +43,7 @@ Soldier 2:
 ./run.sh -s 2 -i 2
 ```
 ### Step 1: Soldier 3 Joins the Group
-Soldier 3
+Soldier 3:
 ```
 ./join.sh
 ```
