@@ -41,7 +41,7 @@ def main(argv):
 
         # exit gracefully
         #
-        print("\nClosing ports and exiting...")               
+        print("Closing ports and exiting...")               
         mca.close()
         return(0)
 

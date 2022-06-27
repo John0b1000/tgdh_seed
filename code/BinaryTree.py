@@ -6,6 +6,7 @@
 
 # import modules
 #
+import sys
 from DataNode import DataNode
 from functs import fread_config, fread_keys, clear_file
 from MulticastAgent import MulticastAgent
@@ -195,14 +196,14 @@ class BinaryTree:
 
         # wait for the key to be added to the file
         #
+        print("---------------//---------------")
+        print("Receiving via multicast ...")
         f = open("/files/keys.txt", 'r', encoding='utf8')
         while True:
             data = fread_keys(f)
             if data is not None:
                 if data[0] == name:
                     f.close()
-                    print("---------------//---------------")
-                    print("Receiving via multicast ...")
                     (print("\tBlind key: {0}\n\tFor node: {1}".format(data[1], data[0])))
                     print("---------------//---------------")
                     return(int(data[1]))
@@ -304,6 +305,8 @@ class BinaryTree:
         self.KeyGeneration()
         self.TreeExport()
         self.InitialCalculateGroupKey()
+        self.TreePrint()
+        print("Group key: {0}".format(self.root.key))
 
     #
     # end method: BuildTree
@@ -394,10 +397,13 @@ class BinaryTree:
             print("Serializing and sending tree ...")
             tcpa = TCPAgent(port=9000, server=self.ip_addr_send)
             send_tree = copy(self)
-            send_tree.key = None
-            send_tree.bKey = None
+            tempkeys = [self.me.key, self.me.bKey]
+            send_tree.me.key = None
+            send_tree.me.bKey = None
             send_tree.mca = None
             tcpa.ClientInit(send_tree)
+            self.me.key = tempkeys[0]
+            self.me.bKey = tempkeys[1]
             node.bKey = self.GetKey(node.name)
             self.SponsorCalculateSendGroupKey()
             self.CalculateGroupKey()
@@ -427,6 +433,21 @@ class BinaryTree:
 
     #
     # end method: GrabUpdatedKeys
+
+    # method: EmptyCheck
+    #
+    def EmptyCheck(self):
+
+        # determine if I am the only one left in the group; if so, exit
+        #
+        if self.root.lchild.IsLeaf() and self.root.rchild.IsLeaf():
+            print("---------------//---------------")
+            print("This group is empty! Program will terminate.")
+            print("---------------//---------------")
+            sys.exit(0)
+
+    #
+    # end method: EmptyCheck
 
     # method: TreePrepEvent
     #
@@ -504,6 +525,7 @@ class BinaryTree:
 
         # prepare the tree
         #
+        self.EmptyCheck()
         self.TreePrepEvent()
 
         # find the member to be erased
@@ -607,9 +629,13 @@ class BinaryTree:
 
         # print the tree via the terminal
         #
+        print("---------------//---------------")
+        print("Displaying tree ...")
         for pre, _, node in RenderTree(self.root):
             treestr = u"%s%s" % (pre, node.name)
-            print(treestr.ljust(8), node.ntype, node.mid)
+            datastr = u"type: %s, ID: %s, key: %s, bKey: %s" % (node.ntype, node.mid, node.key, node.bKey)
+            print(treestr.ljust(8), datastr)
+        print("---------------//---------------")
         
     #
     # end method: TreePrint

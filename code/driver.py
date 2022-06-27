@@ -47,10 +47,6 @@ def main(argv):
         clear_file("/files/keys.txt")
         print("########################################")
 
-        # check the events.txt file every few seconds
-        #
-        return(forever(btree))
-
     else: 
 
         # instantiate a binary tree object
@@ -60,9 +56,9 @@ def main(argv):
         btree = BinaryTree(size=isize, uid=uid)
         print("########################################")
 
-        # check the events.txt file every few seconds
-        #
-        return(forever(btree))
+    # check the events.txt file every few seconds
+    #
+    return(forever(btree))
 
 #
 # end function: main

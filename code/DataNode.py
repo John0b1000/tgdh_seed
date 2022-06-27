@@ -182,7 +182,6 @@ class DataNode(NodeMixin):
         # transfer data from specified node
         # this is a node replacement operation
         #
-        self.pos = node.pos
         self.ntype = node.ntype
         self.mid = node.mid
         self.rchild = node.rchild
@@ -207,6 +206,8 @@ class DataNode(NodeMixin):
         self.l = 0
         self.v = 0
         self.name = '<0,0>'
+        self.key = None
+        self.bKey = None
 
     #
     # end method: MakeRoot
