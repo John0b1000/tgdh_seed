@@ -1,4 +1,4 @@
-# Code Directory
+# Code Directory (Instructions Outdated; Refer to README in the parent directory)
 This folder contains the source code for the TGDH implementation.
 ## Usage: driver.py
 ```
