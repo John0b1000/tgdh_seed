@@ -7,12 +7,16 @@
 # import modules
 #
 from DataNode import DataNode
+from functs import fread_config, fread_keys, clear_file
+from MulticastAgent import MulticastAgent
+from TCPAgent import TCPAgent
 from anytree.exporter import DotExporter
 from anytree import RenderTree
 from anytree import search
 from anytree import PreOrderIter
 import math
 import itertools
+from copy import copy
 
 # class: BinaryTree
 #
@@ -33,6 +37,9 @@ class BinaryTree:
         self.nextmemb = size+1  # the member ID of the next member to join the tree 
         self.height = math.floor(math.log((self.nodemax-1),2))  # height of the tree
         self.root = DataNode() # root of the tree
+        self.RefreshPath = None  # the path of keys that need to be updated after a join or leave
+        self.mca = self.EstablishMulticast()  # a multicasting object used to send messages
+        self.ip_addr_send = None  # the ip address to send the serial object when sponsor
 
         # build an initial tree and print it
         #
@@ -40,6 +47,20 @@ class BinaryTree:
 
     #
     # end constructor
+
+    # method: EstablishMulticast
+    #
+    def EstablishMulticast(self):
+
+        # set up multicast communication
+        #
+        f = open("multicast.config", 'r', encoding='utf8')
+        mcast_params = fread_config(f)
+        f.close()
+        return(MulticastAgent(groups=mcast_params['groups'], port=int(mcast_params['port']), iface=mcast_params['iface'], bind_group=mcast_params['bind_group'], mcast_group=mcast_params['mcast_group']))
+
+    #
+    # end method: EstablishMulticast
 
     # method: AddNodes
     #
@@ -168,6 +189,84 @@ class BinaryTree:
     #
     # end method: KeyGeneration
 
+    # method: GetKey
+    #
+    def GetKey(self, name):
+
+        # wait for the key to be added to the file
+        #
+        f = open("/files/keys.txt", 'r', encoding='utf8')
+        while True:
+            data = fread_keys(f)
+            if data is not None:
+                if data[0] == name:
+                    f.close()
+                    print("---------------//---------------")
+                    print("Receiving via multicast ...")
+                    (print("\tBlind key: {0}\n\tFor node: {1}".format(data[1], data[0])))
+                    print("---------------//---------------")
+                    return(int(data[1]))
+
+    #
+    # end method: GetKey
+
+    # method: SendKey
+    #
+    def SendKey(self, node):
+
+        # multicast this blind key to the rest of the group
+        #
+        print("---------------//---------------")
+        msg = '/' + node.name + '/' + str(node.bKey)
+        print("Sending via multicast:\n\tBlind key: {0}\n\tFor node: {1}".format(node.bKey, node.name))
+        self.mca.send(msg)
+        #print("UDP packet structure: [ {0} | {1} ]".format(node.name, node.bKey))
+        print("---------------//---------------")
+
+    #
+    # end method: SendKey
+
+    # method: InitialCalculateGroupKey
+    #
+    def InitialCalculateGroupKey(self):
+
+        # traverse to the root and calculate the group key; send the blind keys
+        #
+        key_path = self.me.GetKeyPath()
+        co_path = self.me.GetCoPath()
+        self.SendKey(self.me)
+        for i, node in enumerate(co_path):
+            node.bKey = self.GetKey(node.name)
+            key_path[i+1].key = pow(int(node.bKey), key_path[i].key, DataNode.p)
+            if key_path[i+1].ntype != 'root':
+                key_path[i+1].GenBlindKey()
+                self.SendKey(key_path[i+1])
+
+        # clear the keys file now that they are all in memory
+        #
+        clear_file("/files/keys.txt")
+
+    #
+    # end method: InitialCalculateGroupKey
+
+    # method: SponsorCalculateSendGroupKey
+    #
+    def SponsorCalculateSendGroupKey(self):
+
+        # traverse to the root and calculate the group key
+        #
+        key_path = self.me.GetKeyPath()
+        co_path = self.me.GetCoPath()
+        self.SendKey(self.me)
+        for i, node in enumerate(co_path):
+            key_path[i+1].key = pow(int(node.bKey), key_path[i].key, DataNode.p)
+            if key_path[i+1].ntype != 'root':
+                key_path[i+1].GenBlindKey()
+                self.SendKey(key_path[i+1])
+
+    # 
+    # end method: SponsorCalculateSendGroupKey
+
     # method: CalculateGroupKey
     #
     def CalculateGroupKey(self):
@@ -177,10 +276,11 @@ class BinaryTree:
         key_path = self.me.GetKeyPath()
         co_path = self.me.GetCoPath()
         for i, node in enumerate(co_path):
-            node.bKey = input("Enter the blind key of {0}: ".format(node.name))
             key_path[i+1].key = pow(int(node.bKey), key_path[i].key, DataNode.p)
+            if key_path[i+1].ntype != 'root':
+                key_path[i+1].GenBlindKey()
 
-    #
+    # 
     # end method: CalculateGroupKey
 
     # method: BuildTree
@@ -189,8 +289,10 @@ class BinaryTree:
 
         # build the tree
         #
+        print("---------------//---------------")
         print("Generating Tree with {0} members ...".format(str(self.size).rjust(2)))
         print("I am member {0}".format(str(self.uid).rjust(2)))
+        print("---------------//---------------")
         while self.nodetrack is not self.nodemax:
             self.WalkTreeBuild(self.root)
 
@@ -201,7 +303,7 @@ class BinaryTree:
         self.FindMe()
         self.KeyGeneration()
         self.TreeExport()
-        self.CalculateGroupKey()
+        self.InitialCalculateGroupKey()
 
     #
     # end method: BuildTree
@@ -278,6 +380,54 @@ class BinaryTree:
     #
     # end method: FindInsertion
 
+    # method: SponsorCommProtocol
+    #
+    def SponsorCommProtocol(self, node=None, join=True):
+
+        # the sponsor must send out the updated blind keys
+        #
+
+        # if this is a join, send the serialized tree and get the blind key from the new member
+        #
+        if join:
+            print("---------------//---------------")
+            print("Serializing and sending tree ...")
+            tcpa = TCPAgent(port=9000, server=self.ip_addr_send)
+            send_tree = copy(self)
+            send_tree.key = None
+            send_tree.bKey = None
+            send_tree.mca = None
+            tcpa.ClientInit(send_tree)
+            node.bKey = self.GetKey(node.name)
+            self.SponsorCalculateSendGroupKey()
+            self.CalculateGroupKey()
+        else:
+
+            # otherwise, just calculate and send (sponsor calculates new private key)
+            #
+            print("---------------//---------------")
+            print("Generating new keys ...")
+            self.KeyGeneration()
+            print("---------------//---------------")
+            self.SponsorCalculateSendGroupKey()
+
+    #
+    # end method: SponsorCommProtocol
+
+    # method: GrabUpdatedKeys
+    #
+    def GrabUpdatedKeys(self):
+
+        # determine which keys need to be updated after a join or leave event
+        #
+        new_path = set(self.RefreshPath)
+        our_path = set(self.me.GetCoPath())
+        for node in our_path.intersection(new_path):
+            node.bKey = self.GetKey(node.name)
+
+    #
+    # end method: GrabUpdatedKeys
+
     # method: TreePrepEvent
     #
     def TreePrepEvent(self):
@@ -291,21 +441,33 @@ class BinaryTree:
 
     # method: TreeRefresh
     #
-    def TreeRefresh(self):
+    def TreeRefresh(self, event='u', ip_addr_send=None):
 
         # refresh appropriate tree attributes
         #
         self.FindMe()
         self.RecalculateNames()
         self.TreeExport()
-        self.CalculateGroupKey()
+        if self.me.ntype != 'spon':
+            self.GrabUpdatedKeys()
+            self.CalculateGroupKey()
+        else:
+            print("---------------//---------------")
+            print("I am the sponsor!")
+            print("Entering sponsor protocol ...")
+            print("---------------//---------------")
+            if event == 'j':
+                self.ip_addr_send = ip_addr_send
+                self.SponsorCommProtocol(node=self.me.GetSibling(), join=True)
+            else:
+                self.SponsorCommProtocol(join=False)
 
     #
     # end method: TreeRefresh
 
     # method: JoinEvent
     #
-    def JoinEvent(self):
+    def JoinEvent(self, ip_addr_send=None):
 
         # prepare the tree
         #
@@ -317,6 +479,7 @@ class BinaryTree:
         self.AddNodes(inserti_node)
         sponsor_node = inserti_node.lchild  # the sponsor is always the sibling of the new member
         newmemb_node = inserti_node.rchild
+        self.RefreshPath = newmemb_node.GetKeyPath()
 
         # assign types, IDs, and keys
         #
@@ -330,7 +493,7 @@ class BinaryTree:
 
         # refresh the tree
         #
-        self.TreeRefresh()
+        self.TreeRefresh(event='j', ip_addr_send=ip_addr_send)
 
     #
     # end method: JoinEvent
@@ -348,22 +511,68 @@ class BinaryTree:
         for node in self.GetLeaves():
             if node.mid == eid:
 
-                # assign the sponsor
-                #
-                sponsor_node = list(self.WalkPreOrder(node.GetSibling()))[-1]
-                sponsor_node.SponsorAssign(join=False)
+                if node.parent.ntype == 'root':
 
-                # transfer data from the sibling node to the parent
-                # the parent node is being replaced
-                #
-                node.parent.TransferDataRemove(node.GetSibling())
+                    # the root must be relocated
+                    #
+                    new_root = node.GetSibling()
+                    new_root.MakeRoot()
+                    self.root = new_root
+                    sponsor_node = list(self.WalkPreOrder(self.root))[-1]
+                    sponsor_node.SponsorAssign(join=False)
+
+                else:
+
+                    # assign the sponsor
+                    #
+                    sponsor_node = list(self.WalkPreOrder(node.GetSibling()))[-1]
+                    sponsor_node.SponsorAssign(join=False)
+
+                    # transfer data from the sibling node to the parent
+                    # the parent node is being replaced
+                    #
+                    node.parent.TransferDataRemove(node.GetSibling())
+
+        self.RefreshPath = self.FindNode(sponsor_node.mid, True).GetKeyPath()
 
         # refresh the tree
         #
-        self.TreeRefresh()
+        self.TreeRefresh(event='l')
 
     #
     # end method: LeaveEvent
+
+    # method: NewMemberProtocol
+    #
+    def NewMemberProtocol(self):
+
+        # establish a multicast connection
+        #
+        self.mca = self.EstablishMulticast()
+
+        # find me
+        #
+        self.uid = self.nextmemb-1
+        self.FindMe()
+
+        # generate keys and multicast blind key
+        #
+        print("---------------//---------------")
+        print("Generating new keys ...")
+        self.KeyGeneration()
+        print("---------------//---------------")
+        self.SendKey(self.me)
+        
+        # get the blind key from the sponsor
+        #
+        self.me.GetSibling().bKey = self.GetKey(self.me.GetSibling().name)
+
+        # calculate the group key
+        #
+        self.CalculateGroupKey()
+
+    #
+    # end method: NewMemberProtocol
 
     # method: TreeExport
     #
