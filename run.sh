@@ -10,9 +10,22 @@
 #
 set -m
 
-# cleanup the background process
+# cleanup the background process (emergency exit)
 #
 trap "pkill -2 -f ListeningDaemon.py; exit" SIGINT
+
+# parse the command line
+#
+while getopts "s:i:" options; do
+    case "${options}" in
+    s)
+        SIZE=${OPTARG}
+        ;;
+    i)
+        ID=${OPTARG}
+        ;;
+    esac
+done
 
 # signal initialization
 #
@@ -42,7 +55,11 @@ done
 # run the TGDH driver program
 #
 sleep 1.5
-python3 code/driver.py -s $1 -i $2
+python3 code/driver.py -s $SIZE -i $ID
+
+# cleanup the background process
+#
+pkill -2 -f ListeningDaemon.py
 
 #
 # end file: run.sh

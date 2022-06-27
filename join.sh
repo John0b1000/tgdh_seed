@@ -10,7 +10,7 @@
 #
 set -m
 
-# cleanup the background process
+# cleanup the background process (emergency exit)
 #
 trap "pkill -2 -f ListeningDaemon.py; exit" SIGINT
 
@@ -25,7 +25,11 @@ python3 code/ListeningDaemon.py &
 # run the TGDH driver program
 #
 sleep 1.5
-python3 code/driver.py -j $1 -a $2
+python3 code/driver.py -j True -a $(hostname -I)
+
+# cleanup the background process
+#
+pkill -2 -f ListeningDaemon.py
 
 #
 # end file: join.sh
