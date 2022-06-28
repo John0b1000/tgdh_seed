@@ -18,7 +18,7 @@ sudo apt install graphviz
 ## Setup
 This repository should be cloned into a directory accessible by the SEED Internet Emulator. The folder `tgdh_node` is a shared folder that contains the files necessary to implement TGDH. 
 ```
-git clone https://github.com/John0b1000/tgdh_seed.git && chmod a+x tgdh_node/run.sh tgdh_node/join.sh
+git clone https://github.com/John0b1000/tgdh_seed.git && chmod a+x tgdh_seed/tgdh_node/run.sh tgdh_seed/tgdh_node/join.sh
 ```
 ```
 cd tgdh_seed
