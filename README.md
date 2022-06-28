@@ -16,11 +16,6 @@ sudo apt install graphviz
 ```
 ## Usage
 ***Important***: This demonstration is currently configured for use on the SEED Internet Emulator. Trying to run these programs locally or on multiple devices may cause issues to arise. Communication takes place using both multicast and end-to-end TCP connections.
-
-Run all commands from within the `tgdh_node` directory on each node.
-```
-cd /tgdh_node
-```
 ### Initialization
 To create a secure communication group, the following script must be run on the appropriate emulator nodes.
 ```
@@ -37,7 +32,10 @@ To remove a node from the group, simply interrupt the `run.sh` or `join.sh` scri
 Ctrl+C
 ```
 ## Example
-The following series of commands is a simple demonstration using multiple nodes on the SEED emulator. The emulator script can be found above: `subnet_demo.py`. The files `run.sh`, `join.sh`, and `multicast.config`, along with the `code` directory must be located in a shared folder: `tgdh_node`. This shared folder must be located in the same directory as the emulator script. 
+The following series of commands is a simple demonstration using multiple nodes on the SEED emulator. The emulator script can be found above: `subnet_demo.py`. The files `run.sh`, `join.sh`, and `multicast.config`, along with the `code` directory must be located in a shared folder: `tgdh_node`. This shared folder must be located in the same directory as the emulator script. Run all commands from within the `tgdh_node` directory on each node.
+```
+cd /tgdh_node
+```
 ### Step 0: Soldier 1 + Soldier 2 Create a Group
 Soldier 1:
 ```
