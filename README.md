@@ -1,19 +1,34 @@
 # Tree-based Group Diffie-Hellman for SEED Emulator
 This repo contains a Python implementation of Tree-based Group Diffie-Hellman (TGDH) encryption scheme for use on the [SEED Internet Emulator](https://github.com/seed-labs/seed-emulator). This implementation uses the Python library [anytree](https://anytree.readthedocs.io/en/latest/index.html). In order to generate tree visuals, [Graphviz](https://graphviz.org/) must be installed. 
-## MacOS Installation
+## Installation
+### MacOS
 ```
 pip3 install anytree
 ```
 ```
 brew install graphviz
 ```
-## Ubuntu Installation
+```
+git clone https://github.com/John0b1000/tgdh_seed.git
+```
+### Ubuntu
 ```
 pip install anytree
 ```
 ```
 sudo apt install graphviz
 ```
+```
+git clone https://github.com/John0b1000/tgdh_seed.git
+```
+## Setup
+```
+cd tgdh_seed
+```
+```
+python3 subnet_demo.py
+```
+To start the SEED Internet Emulator, follow the instructions [here](https://github.com/seed-labs/seed-emulator).
 ## Usage
 ***Important***: This demonstration is currently configured for use on the SEED Internet Emulator. Trying to run these programs locally or on multiple devices may cause issues to arise. Communication takes place using both multicast and end-to-end TCP connections.
 ### Initialization
