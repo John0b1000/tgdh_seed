@@ -16,6 +16,10 @@ sudo apt install graphviz
 ```
 ## Usage
 ***Important***: This demonstration is currently configured for use on the SEED Internet Emulator. Trying to run these programs locally or on multiple devices may cause issues to arise. Communication takes place using both multicast and end-to-end TCP connections.
+Run all commands from within the `tgdh_node` directory on each node.
+```
+cd /tgdh_node
+```
 ### Initialization
 To create a secure communication group, the following script must be run on the appropriate emulator nodes.
 ```
