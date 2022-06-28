@@ -8,9 +8,6 @@ pip3 install anytree
 ```
 brew install graphviz
 ```
-```
-git clone https://github.com/John0b1000/tgdh_seed.git
-```
 ### Ubuntu
 ```
 pip install anytree
@@ -18,10 +15,11 @@ pip install anytree
 ```
 sudo apt install graphviz
 ```
+## Setup
+This repository should be cloned into a directory accessible by the SEED Internet Emulator. The folder `tgdh_node` is a shared folder that contains the files necessary to implement TGDH. 
 ```
 git clone https://github.com/John0b1000/tgdh_seed.git
 ```
-## Setup
 ```
 cd tgdh_seed
 ```
