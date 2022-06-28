@@ -36,6 +36,10 @@ def add_customized_software(node_a):
     # grab the files
     #
     node_a.addSharedFolder('/tgdh_node', '../tgdh_node')
+
+    # add permissions
+    #
+    node_a.addBuildCommand('chmod a+x /tgdh_node/run.sh /tgdh_node.join.sh')
     
 ###############################################################################
 
