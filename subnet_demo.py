@@ -39,7 +39,7 @@ def add_customized_software(node_a):
 
     # add permissions
     #
-    node_a.addBuildCommand('chmod a+x /tgdh_node/run.sh /tgdh_node.join.sh')
+    node_a.addBuildCommand('chmod a+x tgdh_node/run.sh tgdh_node/join.sh')
     
 ###############################################################################
 
