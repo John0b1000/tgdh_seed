@@ -61,12 +61,12 @@ class MulticastAgent:
             parts = data.decode().split('/')
             if parts[1] == 'join':
                 f = open("/files/events.txt", 'w', encoding='utf8')
-                msg_contents = msg_contents = parts[1] + '/' + parts[2] + '\n'
+                msg_contents = parts[1] + '/' + parts[2] + '\n'
                 f.write(msg_contents)
                 f.close()
             elif parts[1] == 'leave':
                 f = open("/files/events.txt", 'w', encoding='utf8')
-                msg_contents = msg_contents = parts[1] + '/' + parts[2] + '\n'
+                msg_contents = parts[1] + '/' + parts[2] + '\n'
                 f.write(msg_contents)
                 f.close()
             else:
