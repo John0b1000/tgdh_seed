@@ -47,7 +47,7 @@ To remove a node from the group, simply interrupt the `run.sh` or `join.sh` scri
 Ctrl+C
 ```
 ## Example
-The following series of commands is a simple demonstration using multiple nodes on the SEED emulator. The emulator script can be found above: `subnet_demo.py`. The files `run.sh`, `join.sh`, and `multicast.config`, along with the `code` directory must be located in the shared folder: `tgdh_node`. This shared folder must be located in the same directory as the emulator script. 
+The following series of commands is a simple demonstration using multiple nodes on the SEED emulator.
 
 Run all commands from within the `tgdh_node` directory on each node:
 ```
